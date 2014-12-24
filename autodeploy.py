@@ -51,7 +51,7 @@ def get_deploy():
                                     print('Error while deploying from github.com:', file=log_file)
                                     print('username: ' + user, file=log_file)
                                     print('repo: ' + repo, file=log_file)
-                                    print('branch: ' + (branch or 'master')), file=log_file)
+                                    print('branch: ' + (branch or 'master'), file=log_file)
                                     traceback.print_exc(file=log_file)
                             raise
         elif host == 'gitlab.com':
@@ -71,7 +71,7 @@ def get_deploy():
                                     print('Error while deploying from gitlab.com:', file=log_file)
                                     print('username: ' + user, file=log_file)
                                     print('repo: ' + repo, file=log_file)
-                                    print('branch: ' + (branch or 'master')), file=log_file)
+                                    print('branch: ' + (branch or 'master'), file=log_file)
                                     traceback.print_exc(file=log_file)
                             raise
         else:
