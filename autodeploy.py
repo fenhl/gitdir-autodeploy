@@ -5,6 +5,7 @@ gitdir autodeploy
 """
 
 import bottle
+import datetime
 import json
 import os.path
 import subprocess
