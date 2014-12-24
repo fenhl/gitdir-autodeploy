@@ -36,22 +36,34 @@ def get_deploy():
             for user, repo_data in host_data.items():
                 for repo, branches in repo_data.items():
                     for branch in branches:
-                        if branch == 'master' or branch is None:
-                            cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
-                        else:
-                            cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
-                        subprocess.check_call(['git', 'fetch', 'readonly'], cwd=cwd)
-                        subprocess.check_call(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                        try:
+                            if branch == 'master' or branch is None:
+                                cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
+                            else:
+                                cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
+                            subprocess.check_call(['git', 'fetch', 'readonly'], cwd=cwd)
+                            subprocess.check_call(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                        except Exception as e:
+                            if 'logPath' in config and os.path.exists(config['logPath']):
+                                with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'w') as log_file:
+                                    traceback.print_exc(file=log_file)
+                            raise
         elif host == 'gitlab.com':
             for user, repo_data in host_data.items():
                 for repo, branches in repo_data.items():
                     for branch in branches:
-                        if branch == 'master' or branch is None:
-                            cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'master')
-                        else:
-                            cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'branch', branch)
-                        subprocess.check_call(['git', 'fetch', 'readonly'], cwd=cwd)
-                        subprocess.check_call(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                        try:
+                            if branch == 'master' or branch is None:
+                                cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'master')
+                            else:
+                                cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'branch', branch)
+                            subprocess.check_call(['git', 'fetch', 'readonly'], cwd=cwd)
+                            subprocess.check_call(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                        except Exception as e:
+                            if 'logPath' in config and os.path.exists(config['logPath']):
+                                with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'w') as log_file:
+                                    traceback.print_exc(file=log_file)
+                            raise
         else:
             raise LookupError('host not currently supported: {!r}'.format(host))
 
