@@ -9,6 +9,7 @@ import datetime
 import json
 import os.path
 import subprocess
+import traceback
 
 try:
     import uwsgi
