@@ -48,6 +48,10 @@ def get_deploy():
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'w') as log_file:
+                                    print('Error while deploying from github.com:', file=log_file)
+                                    print('username: ' + user, file=log_file)
+                                    print('repo: ' + repo, file=log_file)
+                                    print('branch: ' + (branch or 'master')), file=log_file)
                                     traceback.print_exc(file=log_file)
                             raise
         elif host == 'gitlab.com':
@@ -64,6 +68,10 @@ def get_deploy():
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'w') as log_file:
+                                    print('Error while deploying from gitlab.com:', file=log_file)
+                                    print('username: ' + user, file=log_file)
+                                    print('repo: ' + repo, file=log_file)
+                                    print('branch: ' + (branch or 'master')), file=log_file)
                                     traceback.print_exc(file=log_file)
                             raise
         else:
