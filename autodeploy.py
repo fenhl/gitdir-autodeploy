@@ -44,7 +44,7 @@ def show_index():
 
 @application.route('/deploy')
 def get_deploy():
-    retuest_time = datetime.datetime.utcnow()
+    request_time = datetime.datetime.utcnow()
     for host, host_data in config.get('repos', {}).items():
         if host == 'github.com':
             for user, repo_data in host_data.items():
@@ -59,7 +59,7 @@ def get_deploy():
                             try_subprocess(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
-                                with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
+                                with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                     print('Error while deploying from github.com:', file=log_file)
                                     print('username: ' + user, file=log_file)
                                     print('repo: ' + repo, file=log_file)
@@ -79,7 +79,7 @@ def get_deploy():
                             try_subprocess(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
-                                with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
+                                with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                     print('Error while deploying from gitlab.com:', file=log_file)
                                     print('username: ' + user, file=log_file)
                                     print('repo: ' + repo, file=log_file)
