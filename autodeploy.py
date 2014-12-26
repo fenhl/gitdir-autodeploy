@@ -43,20 +43,22 @@ def get_deploy():
                                 cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
                             else:
                                 cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
-                            fetch_popen = subprocess.Popen(['git', 'fetch', 'readonly'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
+                            fetch_command = ['git', 'fetch', 'readonly']
+                            fetch_popen = subprocess.Popen(fetch_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
                             if fetch_popen.wait() != 0:
                                 if 'logPath' in config and os.path.exists(config['logPath']):
                                     with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                         print('Error while fetching repo. Subprocess output:', file=log_file)
                                         print(fetch_popen.stdout.read().decode('utf-8'))
-                                raise subprocess.CalledProcessError('Error while fetching repo.')
-                            merge_popen = subprocess.Popen(['git', 'reset', '--hard', 'readonly/master'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                                raise subprocess.CalledProcessError(fetch_popen.returncode, fetch_command)
+                            merge_command = ['git', 'reset', '--hard', 'readonly/master']
+                            merge_popen = subprocess.Popen(merge_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                             if merge_popen.wait() != 0:
                                 if 'logPath' in config and os.path.exists(config['logPath']):
                                     with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                         print('Error while merging repo. Subprocess output:', file=log_file)
                                         print(merge_popen.stdout.read().decode('utf-8'))
-                                raise subprocess.CalledProcessError('Error while merging repo.')
+                                raise subprocess.CalledProcessError(merge_popen.returncode, merge_command)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
@@ -75,20 +77,22 @@ def get_deploy():
                                 cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'master')
                             else:
                                 cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'branch', branch)
-                            fetch_popen = subprocess.Popen(['git', 'fetch', 'readonly'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
+                            fetch_command = ['git', 'fetch', 'readonly']
+                            fetch_popen = subprocess.Popen(fetch_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
                             if fetch_popen.wait() != 0:
                                 if 'logPath' in config and os.path.exists(config['logPath']):
                                     with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                         print('Error while fetching repo. Subprocess output:', file=log_file)
                                         print(fetch_popen.stdout.read().decode('utf-8'))
-                                raise subprocess.CalledProcessError('Error while fetching repo.')
-                            merge_popen = subprocess.Popen(['git', 'reset', '--hard', 'readonly/master'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                                raise subprocess.CalledProcessError(fetch_popen.returncode, fetch_command)
+                            merge_command = ['git', 'reset', '--hard', 'readonly/master']
+                            merge_popen = subprocess.Popen(merge_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                             if merge_popen.wait() != 0:
                                 if 'logPath' in config and os.path.exists(config['logPath']):
                                     with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
                                         print('Error while merging repo. Subprocess output:', file=log_file)
                                         print(merge_popen.stdout.read().decode('utf-8'))
-                                raise subprocess.CalledProcessError('Error while merging repo.')
+                                raise subprocess.CalledProcessError(merge_popen.returncode, merge_command)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
