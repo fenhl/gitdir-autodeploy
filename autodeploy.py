@@ -96,8 +96,5 @@ def post_deploy():
             json.dump(bottle.request.json, log_file, sort_keys=True, indent=4, separators=(',', ': '))
     return get_deploy() #TODO read the payload to see what to deploy
 
-@application.route('/deploy/github.com/<user>/<repo>/<branch>')
-pass #TODO
-
 if __name__ == '__main__':
     bottle.run(app=application, host='0.0.0.0', port=8081)
