@@ -56,7 +56,7 @@ def get_deploy():
                             else:
                                 cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
                             try_subprocess(['git', 'fetch', 'readonly'], cwd=cwd, request_time=request_time)
-                            try_subprocess(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                            try_subprocess(['git', 'reset', '--hard', 'readonly/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
@@ -76,7 +76,7 @@ def get_deploy():
                             else:
                                 cwd = os.path.join('/opt/git/gitlab.com', user, repo, 'branch', branch)
                             try_subprocess(['git', 'fetch', 'readonly'], cwd=cwd, request_time=request_time)
-                            try_subprocess(['git', 'reset', '--hard', 'readonly/master'], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                            try_subprocess(['git', 'reset', '--hard', 'readonly/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
@@ -95,6 +95,9 @@ def post_deploy():
         with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f.json')), 'w') as log_file:
             json.dump(bottle.request.json, log_file, sort_keys=True, indent=4, separators=(',', ': '))
     return get_deploy() #TODO read the payload to see what to deploy
+
+@application.route('/deploy/github.com/<user>/<repo>/<branch>')
+pass #TODO
 
 if __name__ == '__main__':
     bottle.run(app=application, host='0.0.0.0', port=8081)
