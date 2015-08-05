@@ -55,8 +55,8 @@ def get_deploy():
                                 cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
                             else:
                                 cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
-                            try_subprocess(['git', 'fetch', 'readonly'], cwd=cwd, request_time=request_time)
-                            try_subprocess(['git', 'reset', '--hard', 'readonly/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+                            try_subprocess(['git', 'fetch', 'origin'], cwd=cwd, request_time=request_time)
+                            try_subprocess(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
                         except Exception as e:
                             if 'logPath' in config and os.path.exists(config['logPath']):
                                 with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
