@@ -63,6 +63,19 @@ def github_deploy(user, repo, branch=master):
 def show_index():
     return bottle.static_file('static/index.html', root=config.get('documentRoot', os.path.dirname(os.path.abspath(__file__))))
 
+@application.route('/deploy/<host>/<repo:path>')
+def deploy_repo(host, repo):
+    if host == 'github.com':
+        repo_parts = repo.split('/')
+        if len(repo_parts) > 3:
+            raise ValueError('{!r} is an invalid repository specifier for github.com'.format(repo))
+        user = repo_parts[0]
+        repo = repo_parts[1]
+        branch = repo_parts[2] if len(repo_parts) >= 3 else 'master'
+        github_deploy(user, repo, branch=branch)
+    else:
+        raise ValueError('Unsupported host: {!r}'.format(host))
+
 @application.route('/deploy')
 def get_deploy():
     request_time = datetime.datetime.utcnow()
