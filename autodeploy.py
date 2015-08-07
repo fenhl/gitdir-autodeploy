@@ -27,6 +27,9 @@ try:
 except:
     config = {}
 
+class DeployError(Exception):
+    pass
+
 def try_subprocess(args, cwd=None, request_time=None):
     if request_time is None:
         request_time = datetime.datetime.utcnow()
@@ -37,6 +40,24 @@ def try_subprocess(args, cwd=None, request_time=None):
                 print('subprocess output:', file=log_file)
                 print(popen.stdout.read().decode('utf-8'), file=log_file)
         raise subprocess.CalledProcessError(popen.returncode, args)
+
+def github_deploy(user, repo, branch=master):
+    try:
+        if branch == 'master' or branch is None:
+            cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
+        else:
+            cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
+        try_subprocess(['git', 'fetch', 'origin'], cwd=cwd, request_time=request_time)
+        try_subprocess(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
+    except Exception as e:
+        if 'logPath' in config and os.path.exists(config['logPath']):
+            with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
+                print('Error while deploying from github.com:', file=log_file)
+                print('username: ' + user, file=log_file)
+                print('repo: ' + repo, file=log_file)
+                print('branch: ' + (branch or 'master'), file=log_file)
+                traceback.print_exc(file=log_file)
+        raise DeployError('{} while deploying. host: github.com, user: {!r}, repo: {!r}, branch: {!r}'.format(e.__class__.__name__, user, repo, branch)) from e
 
 @application.route('/')
 def show_index():
@@ -50,22 +71,7 @@ def get_deploy():
             for user, repo_data in host_data.items():
                 for repo, branches in repo_data.items():
                     for branch in branches:
-                        try:
-                            if branch == 'master' or branch is None:
-                                cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
-                            else:
-                                cwd = os.path.join('/opt/git/github.com', user, repo, 'branch', branch)
-                            try_subprocess(['git', 'fetch', 'origin'], cwd=cwd, request_time=request_time)
-                            try_subprocess(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=cwd, request_time=request_time) #TODO don't reset gitignored files (or try merging and reset only if that fails)
-                        except Exception as e:
-                            if 'logPath' in config and os.path.exists(config['logPath']):
-                                with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
-                                    print('Error while deploying from github.com:', file=log_file)
-                                    print('username: ' + user, file=log_file)
-                                    print('repo: ' + repo, file=log_file)
-                                    print('branch: ' + (branch or 'master'), file=log_file)
-                                    traceback.print_exc(file=log_file)
-                            raise
+                        github_deploy(user, repo, branch=branch)
         elif host == 'gitlab.com':
             for user, repo_data in host_data.items():
                 for repo, branches in repo_data.items():
