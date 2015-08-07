@@ -41,7 +41,7 @@ def try_subprocess(args, cwd=None, request_time=None):
                 print(popen.stdout.read().decode('utf-8'), file=log_file)
         raise subprocess.CalledProcessError(popen.returncode, args)
 
-def github_deploy(user, repo, branch=master):
+def github_deploy(user, repo, branch='master'):
     try:
         if branch == 'master' or branch is None:
             cwd = os.path.join('/opt/git/github.com', user, repo, 'master')
