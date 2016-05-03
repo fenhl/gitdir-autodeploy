@@ -63,8 +63,8 @@ def show_index():
 def get_deploy():
     request_time = datetime.datetime.utcnow()
     for host, host_data in config.get('repos', {}).items():
-        for repo_spec, branches in host_data.items():
-            for branch in branches:
+        for repo_spec, repo_info in host_data.items():
+            for branch in repo_info.get('branches', ['master']):
                 deploy(host, repo_spec, branch=branch, request_time=request_time)
 
 @application.route('/deploy', method='POST')
