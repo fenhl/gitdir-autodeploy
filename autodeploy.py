@@ -6,7 +6,7 @@ gitdir autodeploy
 
 import bottle
 import datetime
-import gitdir.repo
+import gitdir.host
 import json
 import os.path
 import subprocess
@@ -45,7 +45,7 @@ def try_subprocess(args, cwd=None, request_time=None):
 @application.route('/deploy/<hostname>/<repo_spec:path>/<branch>')
 def deploy(hostname, repo_spec, branch='master', request_time=None):
     try:
-        gitdir.repo.by_name(hostname).deploy(repo_spec, branch=branch)
+        gitdir.host.by_name(hostname).deploy(repo_spec, branch=branch)
     except Exception as e:
         if 'logPath' in config and os.path.exists(config['logPath']) and request_time is not None:
             with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
