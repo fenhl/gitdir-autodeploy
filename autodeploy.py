@@ -49,7 +49,8 @@ def deploy(hostname, repo_spec, branch='master', request_time=None):
     except Exception as e:
         if 'logPath' in config and os.path.exists(config['logPath']) and request_time is not None:
             with open(os.path.join(config['logPath'], request_time.strftime('%Y%m%d-%H%M%S-%f-error.log')), 'a') as log_file:
-                print('Error while deploying from {}:'.format(hostname), file=log_file)                print('username: ' + user, file=log_file)
+                print('Error while deploying from {}:'.format(hostname), file=log_file)
+                print('username: ' + user, file=log_file)
                 print('repo: ' + repo_spec, file=log_file)
                 print('branch: ' + (branch or 'master'), file=log_file)
                 traceback.print_exc(file=log_file)
