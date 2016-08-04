@@ -4,6 +4,10 @@
 gitdir autodeploy
 """
 
+import sys
+
+sys.path.append('/opt/py')
+
 import bottle
 import datetime
 import gitdir.host
