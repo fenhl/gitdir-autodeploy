@@ -76,7 +76,7 @@ def post_deploy():
     if 'logPath' in config and os.path.exists(config['logPath']):
         with open(os.path.join(config['logPath'], datetime.datetime.utcnow().strftime('%Y%m%d-%H%M%S-%f.json')), 'w') as log_file:
             json.dump(bottle.request.json, log_file, sort_keys=True, indent=4, separators=(',', ': '))
-    return get_deploy() #TODO read the payload to see what to deploy
+    return deploy('github.com', bottle.request.json['repository']['full_name'], branch=bottle.request.json['ref'][11:]) #TODO add support for hosts other than github.com
 
 if __name__ == '__main__':
     bottle.run(app=application, host='0.0.0.0', port=8081)
