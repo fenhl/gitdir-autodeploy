@@ -57,7 +57,7 @@ def deploy(hostname, repo_spec, branch='master', request_time=None):
                 print('repo: ' + repo_spec, file=log_file)
                 print('branch: ' + (branch or 'master'), file=log_file)
                 traceback.print_exc(file=log_file)
-        raise DeployError('{} while deploying. host: {!r}, user: {!r}, repo: {!r}, branch: {!r}'.format(e.__class__.__name__, hostname, repo_spec, branch)) from e
+        raise DeployError('{} while deploying. host: {!r}, repo: {!r}, branch: {!r}'.format(e.__class__.__name__, hostname, repo_spec, branch)) from e
 
 @application.route('/')
 def show_index():
